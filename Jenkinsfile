@@ -26,9 +26,9 @@ pipeline {
         stage('Push des images sur Docker Hub') {
             steps {
                 withDockerRegistry([credentialsId: 'tokendocker', url: '']) {
-                    sh 'docker push $BACKEND_IMAGE:latest'
-                    sh 'docker push $FRONTEND_IMAGE:latest'
-                    sh 'docker push $MIGRATE_IMAGE:latest'
+                    bat 'docker push $BACKEND_IMAGE:latest'
+                    bat 'docker push $FRONTEND_IMAGE:latest'
+                    bat 'docker push $MIGRATE_IMAGE:latest'
                 }
             }
         }
