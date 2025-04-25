@@ -17,9 +17,9 @@ pipeline {
         }
         stage('Build des images') {
             steps {
-                sh 'docker build -t $BACKEND_IMAGE:latest ./Backend/odc'
-                sh 'docker build -t $FRONTEND_IMAGE:latest ./Frontend'
-                sh 'docker build -t $MIGRATE_IMAGE:latest ./Backend/odc'
+                bat 'docker build -t $BACKEND_IMAGE:latest ./Backend/odc'
+                bat 'docker build -t $FRONTEND_IMAGE:latest ./Frontend'
+                bat 'docker build -t $MIGRATE_IMAGE:latest ./Backend/odc'
             }
         }
 
@@ -46,12 +46,12 @@ pipeline {
 
     post {
         success {
-            mail to: 'votre email@gmail.com',
+            mail to: 'fatihametdiao08@gmail.com',
                  subject: "reussite",
                  body: "L'application a été déployée."
         }
         failure {
-            mail to: 'votre@gmail.com',
+            mail to: 'fatihametdiao08@gmail.com',
                  subject: "❌ Échec",
                  body: "Une erreur s’est produite"
         }
