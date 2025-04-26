@@ -29,21 +29,28 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   db-migrations:
-    image: image-back
-    build:
-      context: ./Backend
-      dockerfile: dockerfile
-    command: |
-      cmd /c "echo Waiting for database... && pg_isready -h database -p 5432 && python odc/manage.py migrate"
-    environment:
-      - DJANGO_SETTINGS_MODULE=odc.settings
-      - POSTGRES_HOST=database
-      - POSTGRES_DB=odcdb
-      - POSTGRES_USER=odc
-      - POSTGRES_PASSWORD=odc123
-      - DATABASE_URL=postgres://odc:odc123@database:5432/odcdb
-    depends_on:
-      - database
+  image: image-back
+  build:
+    context: ./Backend
+    dockerfile: dockerfile
+  command: >
+    sh -c "
+      echo 'Waiting for database...' &&
+      while ! pg_isready -h database -p 5432; do
+        sleep 1
+      done &&
+      echo 'Database is ready! Applying migrations...' &&
+      python odc/manage.py migrate
+    "
+  environment:
+    - DJANGO_SETTINGS_MODULE=odc.settings
+    - POSTGRES_HOST=database
+    - POSTGRES_DB=odcdb
+    - POSTGRES_USER=odc
+    - POSTGRES_PASSWORD=odc123
+    - DATABASE_URL=postgres://odc:odc123@database:5432/odcdb
+  depends_on:
+    - database
 
   frontend:
     image: image-front
