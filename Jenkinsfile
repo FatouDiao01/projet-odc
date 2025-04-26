@@ -15,28 +15,29 @@ pipeline {
                     url: 'https://github.com/FatouDiao01/projet-odc'
             }
         }
+
         stage('Build des images') {
             steps {
-                bat 'docker build -t $BACKEND_IMAGE:latest ./Backend/odc'
-                bat 'docker build -t $FRONTEND_IMAGE:latest ./Frontend'
-                bat 'docker build -t $MIGRATE_IMAGE:latest ./Backend/odc'
+                bat "docker build -t %BACKEND_IMAGE%:latest Backend/odc"
+                bat "docker build -t %FRONTEND_IMAGE%:latest Frontend"
+                bat "docker build -t %MIGRATE_IMAGE%:latest Backend/odc"
             }
         }
 
         stage('Push des images sur Docker Hub') {
             steps {
                 withDockerRegistry([credentialsId: 'tokendocker', url: '']) {
-                    bat 'docker push $BACKEND_IMAGE:latest'
-                    bat 'docker push $FRONTEND_IMAGE:latest'
-                    bat 'docker push $MIGRATE_IMAGE:latest'
+                    bat "docker push %BACKEND_IMAGE%:latest"
+                    bat "docker push %FRONTEND_IMAGE%:latest"
+                    bat "docker push %MIGRATE_IMAGE%:latest"
                 }
             }
         }
 
         stage('Déploiement local avec Docker Compose') {
             steps {
-                sh '''
-                    docker-compose down || true
+                bat '''
+                    docker-compose down || exit 0
                     docker-compose pull
                     docker-compose up -d --build
                 '''
@@ -44,16 +45,5 @@ pipeline {
         }
     }
 
-    post {
-        success {
-            mail to: 'fatihametdiao08@gmail.com',
-                 subject: "reussite",
-                 body: "L'application a été déployée."
-        }
-        failure {
-            mail to: 'fatihametdiao08@gmail.com',
-                 subject: "❌ Échec",
-                 body: "Une erreur s’est produite"
-        }
-    }
+   
 }
