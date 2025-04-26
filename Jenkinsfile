@@ -17,14 +17,14 @@ pipeline {
 
         stage('Build des images') {
             steps {
-               bat "docker build -f Backend/dockerfile -t %BACKEND_IMAGE%:latest Backend"
+                bat "docker build -f Backend/dockerfile -t %BACKEND_IMAGE%:latest Backend"
                 bat "docker build -t %FRONTEND_IMAGE%:latest Frontend"
             }
         }
 
         stage('Push des images sur Docker Hub') {
             steps {
-                withDockerRegistry([credentialsId: 'tokendocker', url: '']) {
+                withDockerRegistry([credentialsId: 'docker-hub-credentials', url: '']) {
                     bat "docker push %BACKEND_IMAGE%:latest"
                     bat "docker push %FRONTEND_IMAGE%:latest"
                 }
@@ -41,6 +41,4 @@ pipeline {
             }
         }
     }
-
-   
 }
