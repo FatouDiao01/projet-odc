@@ -1,9 +1,6 @@
 services:
   backend:
-    image: image-back
-    build:
-      context: ./Backend
-      dockerfile: dockerfile
+    image: fatimadiao20/image-back:latest
     ports:
       - 8000:8080
     environment:
@@ -17,6 +14,13 @@ services:
     depends_on:
       - database
 
+  frontend:
+    image: fatimadiao20/image-front:latest
+    ports:
+      - 5173:5173
+    depends_on:
+      - backend
+
   database:
     image: postgres:latest
     ports:
@@ -29,38 +33,25 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   db-migrations:
-  image: image-back
-  build:
-    context: ./Backend
-    dockerfile: dockerfile
-  command: >
-    sh -c "
-      echo 'Waiting for database...' &&
-      while ! pg_isready -h database -p 5432; do
-        sleep 1
-      done &&
-      echo 'Database is ready! Applying migrations...' &&
-      python odc/manage.py migrate
-    "
-  environment:
-    - DJANGO_SETTINGS_MODULE=odc.settings
-    - POSTGRES_HOST=database
-    - POSTGRES_DB=odcdb
-    - POSTGRES_USER=odc
-    - POSTGRES_PASSWORD=odc123
-    - DATABASE_URL=postgres://odc:odc123@database:5432/odcdb
-  depends_on:
-    - database
-
-  frontend:
-    image: image-front
-    build:
-      context: ./frontend
-      dockerfile: dockerfile
-    ports:
-      - 5173:5173
+    image: fatimadiao20/image-back:latest
+    command: >
+      sh -c "
+        echo 'Waiting for database...' &&
+        while ! pg_isready -h database -p 5432; do
+          sleep 1
+        done &&
+        echo 'Database is ready! Applying migrations...' &&
+        python odc/manage.py migrate
+      "
+    environment:
+      - DJANGO_SETTINGS_MODULE=odc.settings
+      - POSTGRES_HOST=database
+      - POSTGRES_DB=odcdb
+      - POSTGRES_USER=odc
+      - POSTGRES_PASSWORD=odc123
+      - DATABASE_URL=postgres://odc:odc123@database:5432/odcdb
     depends_on:
-      - backend
+      - database
 
 volumes:
   pgdata:
