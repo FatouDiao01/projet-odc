@@ -5,7 +5,6 @@ pipeline {
         DOCKER_USER = 'fatimadiao20'
         BACKEND_IMAGE = "${DOCKER_USER}/image-back"
         FRONTEND_IMAGE = "${DOCKER_USER}/image-front"
-        MIGRATE_IMAGE = "${DOCKER_USER}/projetfilrouge_migrate"
     }
 
     stages {
@@ -20,7 +19,6 @@ pipeline {
             steps {
                 bat "docker build -t %BACKEND_IMAGE%:latest Backend/odc"
                 bat "docker build -t %FRONTEND_IMAGE%:latest Frontend"
-                bat "docker build -t %MIGRATE_IMAGE%:latest Backend/odc"
             }
         }
 
@@ -29,7 +27,6 @@ pipeline {
                 withDockerRegistry([credentialsId: 'tokendocker', url: '']) {
                     bat "docker push %BACKEND_IMAGE%:latest"
                     bat "docker push %FRONTEND_IMAGE%:latest"
-                    bat "docker push %MIGRATE_IMAGE%:latest"
                 }
             }
         }
