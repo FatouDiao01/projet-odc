@@ -30,7 +30,11 @@ services:
 
   db-migrations:
     image: image-back
-    command: python odc/manage.py migrate
+    build:
+      context: ./Backend
+      dockerfile: dockerfile
+    command: |
+      cmd /c "echo Waiting for database... && pg_isready -h database -p 5432 && python odc/manage.py migrate"
     environment:
       - DJANGO_SETTINGS_MODULE=odc.settings
       - POSTGRES_HOST=database
