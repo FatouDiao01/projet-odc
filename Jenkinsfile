@@ -17,23 +17,23 @@ pipeline {
 
         stage('Build des images') {
             steps {
-                sh "docker build -f Backend/dockerfile -t %BACKEND_IMAGE%:latest Backend"
-                sh "docker build -t %FRONTEND_IMAGE%:latest Frontend"
+                bat "docker build -f Backend/dockerfile -t %BACKEND_IMAGE%:latest Backend"
+                bat "docker build -t %FRONTEND_IMAGE%:latest Frontend"
             }
         }
 
         stage('Push des images sur Docker Hub') {
             steps {
                 withDockerRegistry([credentialsId: 'docker-hub-credentials', url: '']) {
-                    sh "docker push %BACKEND_IMAGE%:latest"
-                    sh "docker push %FRONTEND_IMAGE%:latest"
+                    bat "docker push %BACKEND_IMAGE%:latest"
+                    bat "docker push %FRONTEND_IMAGE%:latest"
                 }
             }
         }
 
         stage('Déploiement local avec Docker Compose') {
             steps {
-                sh '''
+                bat '''
                     docker-compose down || exit 0
                     docker-compose pull
                     docker-compose up -d --build
