@@ -17,6 +17,7 @@ pipeline {
 
         stage('Build des images') {
             steps {
+                bat 'set DOCKER_API_VERSION=1.41'
                 bat "docker build -f Backend/dockerfile -t %BACKEND_IMAGE%:latest Backend"
                 bat "docker build -t %FRONTEND_IMAGE%:latest Frontend"
             }
