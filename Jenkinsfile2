@@ -3,7 +3,7 @@ node {
     checkout scm
   }
   stage('SonarQube Analysis') {
-    def scannerHome = tool 'SonarQubeServer';
+    def scannerHome = tool 'sonar';
     withSonarQubeEnv() {
       sh "${scannerHome}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=FatouDiao01_projet-odc_61ecf344-2bbd-4fbf-a294-69e588fea3d0 -Dsonar.projectName='projet-odc'"
     }
