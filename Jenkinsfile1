@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_USER = 'fatou'
+        DOCKER_USER = 'fatimadiao20'
         BACKEND_IMAGE = "${DOCKER_USER}/image-back"
         FRONTEND_IMAGE = "${DOCKER_USER}/image-front"
     }
