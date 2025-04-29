@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Cloner le dépôt') {
             steps {
-                git branch: 'main',
+                git branch: 'master',
                     url: 'https://github.com/FatouDiao01/projet-odc'
             }
         }
