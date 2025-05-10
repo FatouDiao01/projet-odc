@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: madickel2/backend:v1
+          image: fatimadiao20/image-back
           env:
             - name: DJANGO_SETTINGS_MODULE
               value: "odc.settings"
