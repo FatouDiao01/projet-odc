@@ -1,4 +1,3 @@
-# backend-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,6 +12,10 @@ spec:
       labels:
         app: backend
     spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox
+          command: ['sh', '-c', 'until nc -z database 5432; do echo "Waiting for postgres..."; sleep 2; done;']
       containers:
         - name: backend
           image: fatimadiao20/image-back
@@ -20,7 +23,13 @@ spec:
             - name: DJANGO_SETTINGS_MODULE
               value: "odc.settings"
             - name: POSTGRES_HOST
-              value: "postgres"  # Matches the postgres service name
+              value: "database"
+            - name: POSTGRES_DB
+              value: "odcdb"
+            - name: POSTGRES_USER
+              value: "odc"
+            - name: POSTGRES_PASSWORD
+              value: "odc123"
           ports:
             - containerPort: 8000
           readinessProbe:
@@ -29,15 +38,16 @@ spec:
               port: 8000
             initialDelaySeconds: 20
             periodSeconds: 5
-
 ---
-# backend-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: backend
 spec:
+  type: NodePort
   selector:
     app: backend
   ports:
-    - port: 8000
+    - port: 80
+      targetPort: 8000
+      nodePort: 30002

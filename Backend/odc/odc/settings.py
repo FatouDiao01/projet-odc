@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-x*u4xobocld2xgun42d2)uh0p3y15y-$e!q3f$3-v2b#mfj+gh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -77,7 +77,6 @@ WSGI_APPLICATION = 'odc.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -88,6 +87,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
