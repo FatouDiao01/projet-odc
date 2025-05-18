@@ -17,7 +17,7 @@ variable "frontend_image" {
 variable "frontend_port" {
   description = "Port du conteneur frontend"
   type        = number
-  default     = 5173
+  default     = 80
 }
 
 variable "frontend_node_port" {
