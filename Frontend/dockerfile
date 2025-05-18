@@ -1,4 +1,4 @@
-FROM node:23-alpine
+FROM node:23-slim
 
 # 1. Définir le répertoire de travail
 WORKDIR /app
@@ -19,10 +19,10 @@ COPY . .
 # 5. Build du projet
 RUN npm run build
 
-# 6. Serveur HTTP statique
+# 6. Installer le serveur HTTP statique globalement
 RUN npm install -g serve
 
-# 7. Exposer le port
+# 7. Exposer le port 80
 EXPOSE 80
 
 # 8. Commande par défaut pour servir le dossier dist
