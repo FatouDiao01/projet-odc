@@ -1,7 +1,29 @@
 FROM node:23-alpine
+
+# 1. Définir le répertoire de travail
 WORKDIR /app
+
+# 2. Copier uniquement les fichiers nécessaires pour l'installation (meilleure utilisation du cache Docker)
+COPY package*.json ./
+
+# 3. Optimisation : augmenter les délais et réessayer automatiquement en cas d’échec réseau
+RUN npm config set fetch-retries 5 && \
+    npm config set fetch-retry-mintimeout 20000 && \
+    npm config set fetch-retry-maxtimeout 120000 && \
+    npm cache clean --force && \
+    npm install
+
+# 4. Copier le reste des fichiers (après l'install pour maximiser le cache Docker)
 COPY . .
-RUN npm install && npm run build
+
+# 5. Build du projet
+RUN npm run build
+
+# 6. Serveur HTTP statique
 RUN npm install -g serve
+
+# 7. Exposer le port
 EXPOSE 80
+
+# 8. Commande par défaut pour servir le dossier dist
 CMD ["serve", "-s", "dist", "-l", "80"]
