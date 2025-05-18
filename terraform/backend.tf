@@ -36,7 +36,7 @@ resource "kubernetes_deployment" "backend" {
 
           env {
             name  = "DB_HOST"
-            value = "postgres-service"
+            value = "postgres-service.default.svc.cluster.local"
           }
 
           env {
