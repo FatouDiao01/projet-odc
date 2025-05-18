@@ -17,10 +17,9 @@ pipeline {
 
         stage('Build des images') {
             steps {
-                sh '''
-                    export DOCKER_API_VERSION=1.41
-                    docker build -f Backend/dockerfile -t $BACKEND_IMAGE:latest Backend
-                    docker build -t $FRONTEND_IMAGE:latest Frontend
+                bat '''
+                    docker build -f Backend\\Dockerfile -t %BACKEND_IMAGE%:latest Backend
+                    docker build -f Frontend\\Dockerfile -t %FRONTEND_IMAGE%:latest Frontend
                 '''
             }
         }
@@ -28,9 +27,9 @@ pipeline {
         stage('Push des images sur Docker Hub') {
             steps {
                 withDockerRegistry([credentialsId: 'tokendocker', url: '']) {
-                    sh '''
-                        docker push $BACKEND_IMAGE:latest
-                        docker push $FRONTEND_IMAGE:latest
+                    bat '''
+                        docker push %BACKEND_IMAGE%:latest
+                        docker push %FRONTEND_IMAGE%:latest
                     '''
                 }
             }
@@ -38,8 +37,8 @@ pipeline {
 
         stage('Déploiement local avec Docker Compose') {
             steps {
-                sh '''
-                    docker-compose down || true
+                bat '''
+                    docker-compose down || exit 0
                     docker-compose pull
                     docker-compose up -d --build
                 '''
@@ -49,11 +48,18 @@ pipeline {
         stage('Déploiement Kubernetes via Terraform') {
             steps {
                 dir('terraform') {
-                    sh 'terraform init'
-                    sh 'terraform validate'
-                    sh 'terraform apply -auto-approve'
+                    bat 'terraform init'
+                    bat 'terraform validate'
+                    bat 'terraform apply -auto-approve'
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Nettoyage après exécution du pipeline...'
+            bat 'docker system prune -f'
         }
     }
 }
