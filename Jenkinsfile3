@@ -1,7 +1,15 @@
-stage('Déploiement Kubernetes via Terraform') {
+pipeline {
+    agent any
+
+    stages {
+        stage('Déploiement Kubernetes via Terraform') {
             steps {
                 dir('terraform') {
                     sh 'terraform init'
                     sh 'terraform validate'
                     sh 'terraform apply -auto-approve'
                 }
+            }
+        }
+    }
+}
