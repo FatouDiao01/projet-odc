@@ -2,5 +2,6 @@
 # providers.tf
 #######################################
 provider "kubernetes" {
-  cat ~/.kube/config
+  config_path = "~/.kube/config"
 }
+
