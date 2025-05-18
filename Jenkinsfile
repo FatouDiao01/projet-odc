@@ -17,20 +17,20 @@ pipeline {
 
         stage('Build des images') {
             steps {
-                bat '''
-                    set DOCKER_API_VERSION=1.41
-                    docker build -f Backend/dockerfile -t %BACKEND_IMAGE%:latest Backend
-                    docker build -t %FRONTEND_IMAGE%:latest Frontend
+                sh '''
+                    export DOCKER_API_VERSION=1.41
+                    docker build -f Backend/dockerfile -t $BACKEND_IMAGE:latest Backend
+                    docker build -t $FRONTEND_IMAGE:latest Frontend
                 '''
             }
         }
 
         stage('Push des images sur Docker Hub') {
             steps {
-                withDockerRegistry([credentialsId: 'docker-hub-credentials1', url: '']) {
-                    bat '''
-                        docker push %BACKEND_IMAGE%:latest
-                        docker push %FRONTEND_IMAGE%:latest
+                withDockerRegistry([credentialsId: 'tokendocker', url: '']) {
+                    sh '''
+                        docker push $BACKEND_IMAGE:latest
+                        docker push $FRONTEND_IMAGE:latest
                     '''
                 }
             }
@@ -38,8 +38,8 @@ pipeline {
 
         stage('Déploiement local avec Docker Compose') {
             steps {
-                bat '''
-                    docker-compose down || exit 0
+                sh '''
+                    docker-compose down || true
                     docker-compose pull
                     docker-compose up -d --build
                 '''
@@ -49,9 +49,9 @@ pipeline {
         stage('Déploiement Kubernetes via Terraform') {
             steps {
                 dir('terraform') {
-                    bat 'terraform init'
-                    bat 'terraform validate'
-                    bat 'terraform apply -auto-approve'
+                    sh 'terraform init'
+                    sh 'terraform validate'
+                    sh 'terraform apply -auto-approve'
                 }
             }
         }
