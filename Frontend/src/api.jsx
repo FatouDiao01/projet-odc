@@ -1,7 +1,8 @@
 
 import axios from "axios";
-const api = axios.create({
-  baseURL: 'http://myapp.local/api', 
+
+const axiosInstance = axios.create({
+    baseURL: "http://backend-service:8080/api/",  // <-- DNS interne Kubernetes
 });
 
 export const UseAxios = () => {
