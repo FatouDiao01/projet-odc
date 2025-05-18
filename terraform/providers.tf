@@ -2,6 +2,5 @@
 # providers.tf
 #######################################
 provider "kubernetes" {
-  config_path = "~/.kube/config"
+  config_path = "/var/lib/jenkins/.kube/config"
 }
-
