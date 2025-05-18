@@ -1,7 +1,16 @@
 pipeline {
     agent any
-
     stages {
+        stage('Configuration Kubernetes') {
+            steps {
+                sh '''
+                mkdir -p /var/lib/jenkins/.kube
+                # Configuration de l'accès kubectl
+                chmod 600 /var/lib/jenkins/.kube/config
+                '''
+            }
+        }
+        
         stage('Déploiement Kubernetes via Terraform') {
             steps {
                 dir('terraform') {
@@ -10,6 +19,54 @@ pipeline {
                     sh 'terraform apply -auto-approve'
                 }
             }
+        }
+        
+        stage('Vérification du déploiement') {
+            steps {
+                sh '''
+                # Vérifier les pods
+                echo "=== Vérification des pods ==="
+                kubectl get pods
+                
+                # Vérifier les services
+                echo "=== Vérification des services ==="
+                kubectl get services
+                
+                # Vérifier les déploiements
+                echo "=== Vérification des déploiements ==="
+                kubectl get deployments
+                
+                # Vérifier les ingress
+                echo "=== Vérification des ingress ==="
+                kubectl get ingress
+                
+                # Vérifier le statut détaillé du déploiement
+                echo "=== Statut détaillé du frontend ==="
+                kubectl describe deployment front-app
+                
+                echo "=== Statut détaillé du backend ==="
+                kubectl describe deployment backend-deployment
+                
+                echo "=== Statut détaillé de PostgreSQL ==="
+                kubectl describe deployment postgres-deployment
+                
+                # Vérification des logs (optionnel)
+                echo "=== Logs des pods (si disponibles) ==="
+                for pod in $(kubectl get pods -l app=front-app -o name); do
+                  echo "Logs pour $pod:"
+                  kubectl logs $pod --tail=20
+                done
+                '''
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo 'Déploiement réussi! Toutes les ressources ont été créées.'
+        }
+        failure {
+            echo 'Le déploiement a échoué. Vérifiez les logs pour plus de détails.'
         }
     }
 }
